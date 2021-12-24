@@ -46,4 +46,4 @@ Application will be hosted on Heroku
 
 ## Database Schema
 
-![Schema](https://dbdesigner.page.link/umwxzreRRPrEcz396)
+![Schema](file:///Users/traceytrepper/Downloads/Wishlist-Shop-dbdesigner.pdf)

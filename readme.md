@@ -46,4 +46,4 @@ Application will be hosted on Heroku
 
 ## Database Schema
 
-![Schema](<iframe width="560" height="315" src='https://dbdiagram.io/embed/61c68b1f3205b45b73cbfdd2'> </iframe>)
+![Schema](https://dbdiagram.io/embed/61c68b1f3205b45b73cbfdd2)

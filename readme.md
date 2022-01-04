@@ -20,16 +20,13 @@ Application will be built using Flask
 
 - Jinja
 - Bootstrap
+- Javascript
 
 #### Backend
 
 - postgreSQL
 - Flask-SQLAlchemy
 - Flask-Bcrypt
-
-#### API
-
-Ajax tecnology will be used for API request
 
 #### Hosting
 
@@ -46,4 +43,4 @@ Application will be hosted on Heroku
 
 ## Database Schema
 
-![Schema](https://dbdiagram.io/embed/61c68b1f3205b45b73cbfdd2)
+![Schema](<iframe width="560" height="315" src='https://dbdiagram.io/embed/61c68b1f3205b45b73cbfdd2'> </iframe>)

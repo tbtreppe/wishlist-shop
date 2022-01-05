@@ -21,6 +21,8 @@ Application will be built using Flask
 - Jinja
 - Bootstrap
 - Javascript
+- HTML
+- CSS
 
 #### Backend
 
@@ -34,12 +36,13 @@ Application will be hosted on Heroku
 
 ## Features
 
-- Users will sign up and login in to be able to create and view their Wishlist page
-- Users will be able to search for items using keywords
-- Users will be able to click "Add" to any image and have it added to their Wishlist page
-- Logged in users will be able to view and update their Wishlist page
-  - Users will be able to delete any image they no longer want
-  - Users will be able to add a check to something already bought
+- Users will sign up and login in to be able to create and view their Wishlist page (3h)
+- Users will be able to search for items using keywords (5h)
+- Users will be able to click "Add" to any image and have it added to their Wishlist page (4h)
+- Logged in users will be able to view and update their Wishlist page (3h)
+  - Users will be able to delete any image they no longer want (1h)
+  - Users will be able to add a check to something already bought (3h)
+- All visuals will be done with Bootstrap and some CSS (3h)
 
 ## Database Schema
 

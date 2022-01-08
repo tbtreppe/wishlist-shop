@@ -10,7 +10,7 @@ This site will be accesible for anyone who wants to create a wishlist of their m
 
 ## Data
 
-This webpage will use the [Google Shopping](https://rapidapi.com/ajmorenodelarosa/api/google-shopping/) API.
+This webpage will use the [Google Search](https://goog.io/docs) API.
 
 ## Approach
 

@@ -1,11 +1,15 @@
 {% extends 'base.html' %} {% block content %}
 <h2>Welcome back!</h2>
 
-<form method="POST" id="user_form">
+<form method="POST">
   {{ form.hidden_tag() }} {% for field in form if field.widget.input_type !=
-  'hidden' %} {% for error in field.errors %}
-  <span class="text-danger">{{ error }}</span>
-  {% endfor %} {{ field(placeholder=field.label.text, class="form-control") }}
+  'hidden' %}
+  <p>
+    {{ field.label }} {{ field(class_="form-control") }} {% for error in
+    field.errors %}
+    <span class="form-text text-danger">{{ error }}</span>
+    {% endfor %}
+  </p>
   {% endfor %}
 
   <button class="btn btn-primary btn-sm btn-block">Log in</button>

@@ -8,15 +8,11 @@ class User(db.Model):
     """Users"""
     __tablename__="users"
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True,
-    )
-
     username = db.Column(
         db.String(20),
         nullable=False,
         unique=True,
+        primary_key=True
     )
 
     email = db.Column(
@@ -48,7 +44,6 @@ class User(db.Model):
     wishlist_id = db.Column(
         db.Integer,
         db.ForeignKey('wishlist.id', ondelete='CASCADE'),
-        nullable=False
     )
 
     @classmethod
@@ -57,13 +52,13 @@ class User(db.Model):
 
         Hashes password and adds user to system.
         """
+        hashed = bcrypt.generate_password_hash(password)
+        hashed_utf8 = hashed.decode('UTF-8')
 
-        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
-
-        user = User(
+        user = cls(
             username=username,
             email=email,
-            password=hashed_pwd,
+            password=hashed_utf8,
             image_url=image_url,
             first_name=first_name,
             last_name=last_name
@@ -83,14 +78,14 @@ class User(db.Model):
         If can't find matching user (or if password is wrong), returns False.
         """
 
-        user = cls.query.filter_by(username=username).first()
+        u = User.query.filter_by(username=username).first()
 
-        if user:
-            is_auth = bcrypt.check_password_hash(user.password, password)
-            if is_auth:
-                return user
+        if u and bycrypt.check_password_hash(u.password, password):
+            return u
+        
+        else:
+            return False
 
-        return False
 
 class Item(db.Model):
     """Items"""

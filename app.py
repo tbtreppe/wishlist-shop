@@ -1,11 +1,11 @@
-from flask import Flask, redirect, render_template,flash, session
+from flask import Flask, redirect, render_template, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Item, Wishlist
 from forms import UserAddForm, UserEditForm, LoginForm, WishlistForm
 from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///wishlist'
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///wishlist"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = "SECRET!"
@@ -24,20 +24,20 @@ def homepage():
 """Signup user"""
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
-    if "user_id" in session:
-        return redirect(f"/users/{session['user_id']}")
+    if "username" in session:
+        return redirect(f"/users/{session['username']}")
+    
     form = UserAddForm()
 
     if form.validate_on_submit():
         
-        user = User.signup(
-            first_name=form.first_name.data,
-            last_name=form.last_name.data,
-            username=form.username.data,
-            password=form.password.data,
-            email=form.email.data,
-            image_url=form.image_url.data or User.image_url.default.arg,
-            )
+        first_name=form.first_name.data,
+        last_name=form.last_name.data,
+        username=form.username.data,
+        password=form.password.data,
+        email=form.email.data,
+        image_url=form.image_url.data or User.image_url.default.arg,
+        user = User.signup(first_name, last_name, username, password, email, image_url)    
         db.session.add(user)
         try:
             db.session.commit()
@@ -45,11 +45,11 @@ def signup():
         except IntegrityError:
             flash("Username already taken", 'danger')
             return render_template('users/signup.html', form=form)
+        if user:
+            session['username'] = user.username
+            flash ('Welcome!', 'success')
 
-        session['user_id'] = user.user_id
-        flash ('Welcome!', 'success')
-
-        return redirect(f"/users/{user.user_id}")
+            return redirect(f"/users/{user.username}")
 
     else:
         return render_template('users/signup.html', form=form)
@@ -58,8 +58,8 @@ def signup():
 @app.route('/login', methods=["GET", "POST"])
 def login():
     """Handle user login."""
-    if "user_id" in session:
-        return redirct(f"/users/{session['user_id']}")
+    if "username" in session:
+        return redirct(f"/users/{session['username']}")
     
     form = LoginForm()
 
@@ -70,8 +70,8 @@ def login():
         if user:
         
             flash(f"Hello, {user.first_name}!", "success")
-            session['user_id'] = user.user_id
-            return redirect(f"/users/{user.user_id}")
+            session['username'] = user.username
+            return redirect(f"/users/{user.username}")
         else:
             flash("Invalid credentials.", 'danger')
             return render_template('users/login.html', form=form)
@@ -81,23 +81,23 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.pop('user_id')
+    session.pop('username')
     flash("Successfully logged out", 'success')
     return redirect ('/login')
 
-@app.route("/users/<int:user_id>", methods=['GET', 'POST'])
-def show_user_details(user_id):
-    if "user_id" not in session:
+@app.route('/users/<username>', methods=['GET', 'POST'])
+def show_user_details(username):
+    if "username" not in session:
         flash("Please log in first!", 'error')
         return redirect("users/register")
-    user = User.query.get(user_id)
+    user = User.query.get(username)
     return render_template("users/user_details.html", user=user)
 
-@app.route('/users/<int:user_id>/newwishlist', methods=["GET", "POST"])
+@app.route('/users/<username>/newwishlist', methods=["GET", "POST"])
 def add_wishlist():
     """Add a wish list."""
-    if "user_id" in session:
-        return redirct(f"/users/{session['user_id']}")
+    if "username" in session:
+        return redirct(f"/users/{session['username']}")
     
     form = WishlistForm()
 
@@ -106,3 +106,13 @@ def add_wishlist():
         return redirect('/wishlist')
             
     return render_template('users/newwishlist.html', form=form)
+
+    @app.route('/users/<username>/showwishlist', methods=['GET', 'POST'])
+    def show_wishlist(wishlist):
+        """Show a the users created wish list page and 
+        have a search bar to search for and add images"""
+        if "username" in session:
+            return redirct(f"/users/{session['username']}")
+
+        wishlist = Wishlist.query.get(wishlist)
+        return render_template("/users/wishlist_details.html", wishlist=wishlist)

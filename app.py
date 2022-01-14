@@ -4,6 +4,7 @@ from models import db, connect_db, User, Item, Wishlist
 from forms import UserAddForm, UserEditForm, LoginForm, WishlistForm
 from sqlalchemy.exc import IntegrityError
 
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///wishlist"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

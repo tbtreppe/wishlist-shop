@@ -31,18 +31,18 @@ def signup():
 
     if form.validate_on_submit():
         
-        first_name=form.first_name.data,
-        last_name=form.last_name.data,
-        username=form.username.data,
-        password=form.password.data,
-        email=form.email.data,
-        image_url=form.image_url.data or User.image_url.default.arg,
-        user = User.signup(first_name, last_name, username, password, email, image_url)    
+        first_name=form.first_name.data
+        last_name=form.last_name.data
+        username=form.username.data
+        password=form.password.data
+        email=form.email.data
+        image_url=form.image_url.data or User.image_url.default.arg
+        user = User.signup(username, email, password, image_url, first_name, last_name)
         db.session.add(user)
         try:
             db.session.commit()
 
-        except IntegrityError:
+        except IntegrityError as e:
             flash("Username already taken", 'danger')
             return render_template('users/signup.html', form=form)
         if user:
@@ -91,7 +91,8 @@ def show_user_details(username):
         flash("Please log in first!", 'error')
         return redirect("users/register")
     user = User.query.get(username)
-    return render_template("users/user_details.html", user=user)
+    form = WishlistForm()
+    return render_template("users/user_details.html", user=user, form=form)
 
 @app.route('/users/<username>/newwishlist', methods=["GET", "POST"])
 def add_wishlist():

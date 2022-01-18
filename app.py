@@ -147,13 +147,28 @@ def add_items_to_wishlist(wishlist_id):
 
     return render_template('users/wishlist_details.html',  wishlist=wishlist)
 
-@app.route('/users/search', methods=['POST'])
-def search():
-    url = f"https://api.goog.io/v1/images/" + urllib.parse.urlencode(query)
+@app.route('/users/<int:wishlist_id>/delete', methods=['POST'])
+def delete_user(wishlist_id):
+    if "username" not in session:
+        flash("Please login first", 'error')
+        return redirect("users/signup")
+    if "wishlist_id" == session["wishlist.id"]:
+        wishlist = User.query.get(wishlist_id)
+        db.session.delete(wishlist)
+        db.session.commit()
+        session.pop("wishlist_id")
+        flash("Wishlist deleted!", "success")
+        return redirect("/home")
+    flash("No permission", "error")
+    return redirect('/home')
 
-    resp = requests.get(url, API_SECRET_KEY=API_SECRET_KEY)
-    result = json.loads(resp.text)
-    return render_template('users/search_results.html', result=result)
+#@app.route('/users/search', methods=['POST'])
+#def search():
+ #   url = f"https://api.goog.io/v1/images/" + urllib.parse.urlencode(query)
+
+  #  resp = requests.get(url, API_SECRET_KEY=API_SECRET_KEY)
+   # result = json.loads(resp.text)
+    #return render_template('users/search_results.html', result=result)
 
 
 

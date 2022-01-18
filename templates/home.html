@@ -1,4 +1,20 @@
 {% extends 'base.html' %} {% block content %}
 <h1>Welcome back!</h1>
-
-{% endblock %}
+{% for wishlist in wishlist %}
+<li class="list-group-item">
+  <a
+    href="/users/{{ wishlist.id }}/wishlist_details"
+    class="btn btn-primary btn-sm btn-block"
+    >{{ wishlist.name }}
+  </a>
+</li>
+<form>
+  <button
+    class="btn btn-danger btn-sm"
+    formaction="/users/{{ wishlist.id }}/delete"
+    formmethod="POST"
+  >
+    Delete Wishlist
+  </button>
+</form>
+{% endfor %} {% endblock %}

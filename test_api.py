@@ -1,6 +1,6 @@
-
 import urllib
 import requests
+from secret_key import API_SECRET_KEY
 
 # set the api key in headers
 headers = {

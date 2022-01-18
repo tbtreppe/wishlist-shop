@@ -1,4 +1,6 @@
 {% extends 'base.html' %} {% block content %}
+<h1>Create a Wish List!</h1>
+
 <form method="POST">
   {{ form.hidden_tag() }} {% for field in form if field.widget.input_type !=
   'hidden' %}
@@ -9,7 +11,18 @@
     {% endfor %}
   </p>
   {% endfor %}
-  <button class="btn btn-primary btn-sm btn-block">Create a Wish List!</button>
+  <button class="btn btn-primary btn-sm btn-block">Create</button>
 </form>
-
-{% endblock %}
+{% if 'username' in session %}
+<a
+  href="/users/{{ user.username }}/update"
+  class="btn btn-primary btn-sm btn-block"
+>
+  Edit profile
+</a>
+{% endif %} {% for wishlist in wishlist %}
+<li class="list-group-item">
+  <a href="/user/{{ wishlist.id }}" class="btn btn-primary btn-sm btn-block">
+  </a>
+</li>
+{% endfor %} {% endblock %}

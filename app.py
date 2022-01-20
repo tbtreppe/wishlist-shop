@@ -1,7 +1,7 @@
-from flask import Flask, redirect, render_template, flash, session
+from flask import Flask, redirect, render_template, flash, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Item, Wishlist
-from forms import UserAddForm, UserEditForm, LoginForm, WishlistForm
+from forms import UserAddForm, UserEditForm, LoginForm, WishlistForm, SearchItemForm
 from sqlalchemy.exc import IntegrityError
 from secret_key import API_SECRET_KEY
 import urllib
@@ -90,12 +90,14 @@ def login():
 
     return render_template('users/login.html', form=form)
 
+"""logout user"""
 @app.route('/logout')
 def logout():
     session.pop('username')
     flash("Successfully logged out", 'success')
     return redirect ('/login')
 
+"""edit and update user information"""
 @app.route('/users/<username>/update', methods=['GET', 'POST'])
 def edit_profile(username):
     if "username" not in session:
@@ -112,12 +114,13 @@ def edit_profile(username):
             user.email = form.email.data
             user.image_url = form.image_url.data or "/static/images/default-pic.png"
             db.session.commit()
-            
+            flash("Updated information!", 'success')
             return redirect(f"/users/{user.username}")
         flash("Wrong password, please try again", 'danger')
     
     return render_template("users/edit.html", form=form, user=user)
 
+"""go to user page and create a wishlist"""
 @app.route('/users/<username>', methods=['GET', 'POST'])
 def show_user_details(username):
     if "username" not in session:
@@ -137,39 +140,55 @@ def show_user_details(username):
             
     return render_template('users/user_details.html', form=form, user=user)
 
-@app.route('/users/<int:wishlist_id>/wishlist_details', methods=['GET'])
-def add_items_to_wishlist(wishlist_id):
+"""go to wishlist page and click search to go to search page"""
+@app.route('/users/<int:wishlist_id>/wishlist_details', methods=['GET', 'POST'])
+def wishlist_details(wishlist_id):
     if "username" not in session:
         flash("Please log in first!", 'error')
         return redirect("users/signup")
     
     wishlist = Wishlist.query.get_or_404(wishlist_id)
-
     return render_template('users/wishlist_details.html',  wishlist=wishlist)
 
+
+@app.route('/users/search', methods=['GET', 'POST'])
+def search():
+    form = SearchItemForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        item = Item(name=name)
+        db.session.add(item)
+        db.session.commit()
+        
+        headers = {"apikey": "2797b24d-1fef-4568-89ac-45423bf372d6"}
+        query = {"q": "item",
+        "hl": "en"}
+
+        url = f"https://api.goog.io/v1/images/" + urllib.parse.urlencode(query)
+
+        resp = requests.get(url, headers=headers)
+        result = resp.json()
+       
+        return redirect("show_search_results")
+        
+    return render_template('users/search.html', form=form)
+
+@app.route('/users/<int:item_id>/show_search_results')
+def show_results():
+    item = Item.query.get_or_404(item_id)
+    return render_template('/users/show_search_results.html', item=item)
+
+"""Delete wish list"""
 @app.route('/users/<int:wishlist_id>/delete', methods=['POST'])
 def delete_user(wishlist_id):
     if "username" not in session:
         flash("Please login first", 'error')
         return redirect("users/signup")
-    if "wishlist_id" == session["wishlist.id"]:
-        wishlist = User.query.get(wishlist_id)
-        db.session.delete(wishlist)
-        db.session.commit()
-        session.pop("wishlist_id")
-        flash("Wishlist deleted!", "success")
-        return redirect("/home")
-    flash("No permission", "error")
-    return redirect('/home')
-
-#@app.route('/users/search', methods=['POST'])
-#def search():
- #   url = f"https://api.goog.io/v1/images/" + urllib.parse.urlencode(query)
-
-  #  resp = requests.get(url, API_SECRET_KEY=API_SECRET_KEY)
-   # result = json.loads(resp.text)
-    #return render_template('users/search_results.html', result=result)
-
+    wishlist = Wishlist.query.get(wishlist_id)
+    db.session.delete(wishlist)
+    db.session.commit()
+    flash("Wishlist deleted!", "success")
+    return redirect("/")
 
 
 #@app.route('/users/search', methods=['POST'])

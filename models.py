@@ -101,10 +101,6 @@ class Item(db.Model):
         nullable=False,
     )
 
-    price = db.Column(
-        db.Float,
-    )
-
     wishlist = db.relationship('Wishlist', backref="items")
 
    # def serialize(self):

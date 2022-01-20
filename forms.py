@@ -28,3 +28,7 @@ class LoginForm(FlaskForm):
 class WishlistForm(FlaskForm):
     """Form for creating a wish list"""
     name = StringField('Name', validators=[DataRequired()] )
+
+class SearchItemForm(FlaskForm):
+    """Form for searching for items"""
+    name = StringField('Name', validators=[DataRequired()])

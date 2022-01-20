@@ -1,4 +1,9 @@
-{% extends 'base.html' %} {% block content %} {% if ret_search %}
+{% extends 'base.html' %} {% block content %}
 <h1>Results of your search</h1>
 <p>Click the add button by the photo to add the item to your Wish List</p>
-{% endif %} {% endblock %}
+<table>
+  {% for item in items %}
+  <td>{{item["name"]}}</td>
+  {% endfor %}
+</table>
+{% endblock %}

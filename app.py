@@ -132,7 +132,7 @@ def show_user_details(username):
     
         if form.validate_on_submit():
             name = form.name.data
-            wishlist = Wishlist(name=name)
+            wishlist = Wishlist(name=name, user=user)
             db.session.add(wishlist)
             db.session.commit()
             flash(f"{wishlist.name} Wish List created!", "success")
@@ -151,32 +151,32 @@ def wishlist_details(wishlist_id):
     return render_template('users/wishlist_details.html',  wishlist=wishlist)
 
 
-@app.route('/users/search', methods=['GET', 'POST'])
+@app.route('/users/<int:wishlist_id>/search', methods=['GET', 'POST'])
 def search():
     form = SearchItemForm()
     if form.validate_on_submit():
         name = form.name.data
-        item = Item(name=name)
-        db.session.add(item)
-        db.session.commit()
         
         headers = {"apikey": "2797b24d-1fef-4568-89ac-45423bf372d6"}
-        query = {"q": "item",
+        query = {"q": form.name.data,
         "hl": "en"}
 
         url = f"https://api.goog.io/v1/images/" + urllib.parse.urlencode(query)
 
         resp = requests.get(url, headers=headers)
         result = resp.json()
+        print(result)
+        session["result"] = result
+        # pass result through session
        
-        return redirect("show_search_results")
+        return redirect("/users/1/show_search_results")
         
     return render_template('users/search.html', form=form)
 
-@app.route('/users/<int:item_id>/show_search_results')
-def show_results():
-    item = Item.query.get_or_404(item_id)
-    return render_template('/users/show_search_results.html', item=item)
+@app.route('/users/<int:wishlist_id>/show_search_results')
+def show_results(wishlist_id):
+    result = session["result"]
+    return render_template('/users/show_search_results.html', result=result)
 
 """Delete wish list"""
 @app.route('/users/<int:wishlist_id>/delete', methods=['POST'])

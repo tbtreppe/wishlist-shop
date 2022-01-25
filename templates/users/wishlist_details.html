@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% block content %}
 <h1>Add items to your {{ wishlist.name }} Wish List</h1>
 
-  <a href="/users/search" class="btn btn-primary">Go to search page</a>
+  <a href="/users/{{ wishlist.id }}/search" class="btn btn-primary">Go to search page</a>
 </form>
 
 {% endblock %}

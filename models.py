@@ -103,8 +103,6 @@ class Item(db.Model):
 
     wishlist = db.relationship('Wishlist', backref="items")
 
-   # def serialize(self):
-    #    return {'id': self.id, 'name': self.name, 'price': self.price}
 
 class Wishlist(db.Model):
     """Wishlist"""
@@ -125,6 +123,10 @@ class Wishlist(db.Model):
         db.ForeignKey('items.id', ondelete='CASCADE'),
     )
 
+    username = db.Column(
+        db.String(20),
+        db.ForeignKey('users.username', ondelete='CASCADE')
+    )
     user = db.relationship('User', backref="wishlist")
 
 def connect_db(app):

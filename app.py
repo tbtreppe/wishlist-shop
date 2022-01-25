@@ -168,7 +168,7 @@ def search():
 
         resp = requests.get(url, headers=headers)
         result = resp.json()
-       
+        print(result)
         return redirect("show_search_results")
         
     return render_template('users/search.html', form=form)
@@ -176,7 +176,7 @@ def search():
 @app.route('/users/<int:item_id>/show_search_results')
 def show_results():
     item = Item.query.get_or_404(item_id)
-    return render_template('/users/show_search_results.html', item=item)
+    return render_template('/users/show_search_Results')
 
 """Delete wish list"""
 @app.route('/users/<int:wishlist_id>/delete', methods=['POST'])

@@ -3,7 +3,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Item, Wishlist
 from forms import UserAddForm, UserEditForm, LoginForm, WishlistForm, SearchItemForm
 from sqlalchemy.exc import IntegrityError
-from secret_key import API_SECRET_KEY
+#from secret_key import API_SECRET_KEY
 import urllib
 import requests
 
@@ -152,7 +152,8 @@ def wishlist_details(wishlist_id):
 
 
 @app.route('/users/<int:wishlist_id>/search', methods=['GET', 'POST'])
-def search():
+def search(wishlist_id):
+    wishlist = Wishlist.query.get_or_404(wishlist_id)
     form = SearchItemForm()
     if form.validate_on_submit():
         name = form.name.data
@@ -166,28 +167,18 @@ def search():
         resp = requests.get(url, headers=headers)
         result = resp.json()
         print(result)
-<<<<<<< HEAD
-        return redirect("show_search_results")
-        
-    return render_template('users/search.html', form=form)
-
-@app.route('/users/<int:item_id>/show_search_results')
-def show_results():
-    item = Item.query.get_or_404(item_id)
-    return render_template('/users/show_search_Results')
-=======
         session["result"] = result
         # pass result through session
        
-        return redirect("/users/1/show_search_results")
+        return redirect(f"/users/{wishlist.id}/show_search_results")
         
-    return render_template('users/search.html', form=form)
+    return render_template('users/search.html', form=form, wishlist=wishlist)
 
 @app.route('/users/<int:wishlist_id>/show_search_results')
 def show_results(wishlist_id):
     result = session["result"]
+  
     return render_template('/users/show_search_results.html', result=result)
->>>>>>> baffc364f610ac0e8d0445d262ce3b6ddf252493
 
 """Delete wish list"""
 @app.route('/users/<int:wishlist_id>/delete', methods=['POST'])

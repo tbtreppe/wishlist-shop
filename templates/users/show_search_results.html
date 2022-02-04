@@ -1,9 +1,69 @@
 {% extends 'base.html' %} {% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <h1>Results of your search</h1>
 <p>Click the add button by the photo to add the item to your Wish List</p>
-<table>
-  {% for item in items %}
-  <td>{{item["name"]}}</td>
-  {% endfor %}
+<table class="table table-striped">
+  <thead>
+    <tr class="bg-info">
+      <tbody id="mytable">
+        {% if session['result'] %}
+        <td>{{ result }}</td>
+        {% endif %}
+      </tbody>
+    </tr>
+  </thead>
 </table>
+<script type="text/javascript">
+  // try 1
+  // $.makeTable = function (result) {
+  //   var table = $("<table border=1>");
+  //   var tblHeader = "<tr>";
+  //   for (var k in result[0]) tblHeader += "<th>" + k + "</th>";
+  //   tblHeader += "</tr>";
+  //   $(tblHeader).appendTo(table);
+  //   $.each(res, function (index, value) {
+  //     var TableRow = "<tr>";
+  //     $.each(value, function (key, val) {
+  //       TableRow += "<td>" + val + "</td>";
+  //     });
+  //     TableRow += "</tr>";
+  //     $(table).append(TableRow);
+  //   });
+  //   return $(table);
+  // };
+
+  //  try 2
+  // let result = [];
+  // let tbl = "<table/>".attr("id", "mytable");
+  // $("#div1").append(tbl);
+  // for (let i = 0; i < obj.length; i++) {
+  //   let row = "<tr>";
+  //   let td1 = "<td>" + obj[i]["image"] + "</td>";
+  //   let td2 = "<td>" + obj[i]["link"] + "</td>";
+
+  //   $("#mytable").append(row + td1 + td2);
+  // }
+</script>
 {% endblock %}
+
+<!-- try 3 -->
+<!-- {% block script %} -->
+<!-- <script>
+  function get_items() {
+    let item = document.getElementsByName("result");
+
+    let search = {
+      item: item.value,
+    };
+    fetch(`${window.origin}/users/<int:wishlist_id>/search`, {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify(search),
+      cache: "no-cache",
+      headers: new Headers({
+        "content-type": "application/json",
+      }),
+    });
+  }
+</script> -->
+<!-- {% endblock %} -->

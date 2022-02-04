@@ -41,10 +41,7 @@ class User(db.Model):
         nullable=False,
     )
 
-    wishlist_id = db.Column(
-        db.Integer,
-        db.ForeignKey('wishlist.id', ondelete='CASCADE'),
-    )
+
 
     @classmethod
     def signup(cls, username, email, password, image_url, first_name, last_name):
@@ -125,7 +122,7 @@ class Wishlist(db.Model):
 
     username = db.Column(
         db.String(20),
-        db.ForeignKey('users.username', ondelete='CASCADE')
+        db.ForeignKey('users.username')
     )
     user = db.relationship('User', backref="wishlist")
 

@@ -2,7 +2,12 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <h1>Results of your search</h1>
 <p>Click the add button by the photo to add the item to your Wish List</p>
-<table class="table table-striped">
+{% if result %}
+  {% for res in result["image_results"] %}
+  <img src="{{ res['image']['src'] }}" />
+  {% endfor %}
+{% endif %}
+<!-- <table class="table table-striped">
   <thead>
     <tr class="bg-info">
       <tbody id="mytable">
@@ -12,7 +17,7 @@
       </tbody>
     </tr>
   </thead>
-</table>
+</table> -->
 <script type="text/javascript">
   // try 1
   // $.makeTable = function (result) {

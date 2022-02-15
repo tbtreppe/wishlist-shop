@@ -1,74 +1,24 @@
 {% extends 'base.html' %} {% block content %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 <h1>Results of your search</h1>
-<p>Click the add button by the photo to add the item to your Wish List</p>
-{% if result %}
-  {% for res in result["image_results"] %}
-  <img src="{{ res['image']['src'] }}" />
+<p>
+  Click the add button by the photo to add the item to your Wish List and
+  optionally add a name to easily reference the image
+</p>
+{% if result %} {% for res in result["image_results"] %}
+<img src="{{ res['image']['src'] }}" />
+<form method="POST">
+  {{ form.hidden_tag() }} {% for field in form if field.widget.input_type !=
+  'hidden' %}
+  <p>
+    {{ field.label }} {{ field(class_="form-control") }} {% for error in
+    field.errors %}
+    <span class="form-text text-danger">{{ error }}</span>
+    {% endfor %}
+  </p>
   {% endfor %}
-{% endif %}
-<!-- <table class="table table-striped">
-  <thead>
-    <tr class="bg-info">
-      <tbody id="mytable">
-        {% if session['result'] %}
-        <td>{{ result }}</td>
-        {% endif %}
-      </tbody>
-    </tr>
-  </thead>
-</table> -->
-<script type="text/javascript">
-  // try 1
-  // $.makeTable = function (result) {
-  //   var table = $("<table border=1>");
-  //   var tblHeader = "<tr>";
-  //   for (var k in result[0]) tblHeader += "<th>" + k + "</th>";
-  //   tblHeader += "</tr>";
-  //   $(tblHeader).appendTo(table);
-  //   $.each(res, function (index, value) {
-  //     var TableRow = "<tr>";
-  //     $.each(value, function (key, val) {
-  //       TableRow += "<td>" + val + "</td>";
-  //     });
-  //     TableRow += "</tr>";
-  //     $(table).append(TableRow);
-  //   });
-  //   return $(table);
-  // };
 
-  //  try 2
-  // let result = [];
-  // let tbl = "<table/>".attr("id", "mytable");
-  // $("#div1").append(tbl);
-  // for (let i = 0; i < obj.length; i++) {
-  //   let row = "<tr>";
-  //   let td1 = "<td>" + obj[i]["image"] + "</td>";
-  //   let td2 = "<td>" + obj[i]["link"] + "</td>";
+  <button class="btn btn-primary btn-sm btn-block">Add to Wish List!</button>
+</form>
 
-  //   $("#mytable").append(row + td1 + td2);
-  // }
-</script>
-{% endblock %}
-
-<!-- try 3 -->
-<!-- {% block script %} -->
-<!-- <script>
-  function get_items() {
-    let item = document.getElementsByName("result");
-
-    let search = {
-      item: item.value,
-    };
-    fetch(`${window.origin}/users/<int:wishlist_id>/search`, {
-      method: "POST",
-      credentials: "include",
-      body: JSON.stringify(search),
-      cache: "no-cache",
-      headers: new Headers({
-        "content-type": "application/json",
-      }),
-    });
-  }
-</script> -->
-<!-- {% endblock %} -->
+{% endfor %} {% endif %} {% endblock %}

@@ -1,7 +1,32 @@
 {% extends 'base.html' %} {% block content %}
-<h1>Add items to your {{ wishlist.name }} Wish List</h1>
+<h1>Search items to add to your {{ wishlist.name }} Wish List</h1>
 
-  <a href="/users/{{ wishlist.id }}/search" class="btn btn-primary">Go to search page</a>
+<form method="POST">
+  {{ form.hidden_tag() }} {% for field in form if field.widget.input_type !=
+  'hidden' %}
+  <p>
+    {{ field.label }} {{ field(class_="form-control") }} {% for error in
+    field.errors %}
+    <span class="form-text text-danger">{{ error }}</span>
+    {% endfor %}
+  </p>
+  {% endfor %}
+  <button class="btn btn-primary btn-sm btn-block">Search</button>
 </form>
 
+<div class="container">
+  <h1 class="display-3">{{wishlist.name}} Wish List</h1>
+  <table class="table table-striped">
+    <thead class="thead-dark">
+      <th>Items</th>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td><img src="{{ item.name }}" /></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

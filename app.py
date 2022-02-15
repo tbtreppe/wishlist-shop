@@ -1,7 +1,7 @@
 from flask import Flask, redirect, render_template, flash, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Item, Wishlist
-from forms import UserAddForm, UserEditForm, LoginForm, WishlistForm, SearchItemForm
+from forms import UserAddForm, UserEditForm, LoginForm, WishlistForm, SearchItemForm, AddItemForm
 from sqlalchemy.exc import IntegrityError
 #from secret_key import API_SECRET_KEY
 import urllib
@@ -140,7 +140,7 @@ def show_user_details(username):
             
     return render_template('users/user_details.html', form=form, user=user)
 
-"""go to wishlist page and click search to go to search page"""
+"""go to wishlist page and enter item to search for"""
 @app.route('/users/<int:wishlist_id>/wishlist_details', methods=['GET', 'POST'])
 def wishlist_details(wishlist_id):
     if "username" not in session:
@@ -148,37 +148,88 @@ def wishlist_details(wishlist_id):
         return redirect("users/signup")
     
     wishlist = Wishlist.query.get_or_404(wishlist_id)
-    return render_template('users/wishlist_details.html',  wishlist=wishlist)
 
+    if "item_id" not in session:
+        form = SearchItemForm()
+        if form.validate_on_submit():
+            name = form.name.data
+            item = Item(name=name)
+            
+            headers = {"apikey": "2797b24d-1fef-4568-89ac-45423bf372d6"}
+            query = {"q": form.name.data,
+            "hl": "en"}
 
-@app.route('/users/<int:wishlist_id>/search', methods=['GET', 'POST'])
-def search(wishlist_id):
-    wishlist = Wishlist.query.get_or_404(wishlist_id)
-    form = SearchItemForm()
-    if form.validate_on_submit():
-        name = form.name.data
-        
-        headers = {"apikey": "2797b24d-1fef-4568-89ac-45423bf372d6"}
-        query = {"q": form.name.data,
-        "hl": "en"}
+            url = f"https://api.goog.io/v1/images/" + urllib.parse.urlencode(query)
 
-        url = f"https://api.goog.io/v1/images/" + urllib.parse.urlencode(query)
-
-        resp = requests.get(url, headers=headers)
-        result = resp.json()
-        print(result)
-        session["result"] = result
-        # pass result through session
+            resp = requests.get(url, headers=headers)
+            result = resp.json()
+            print(result)
+            session["result"] = result
+            # pass result through session
        
-        return redirect(f"/users/{wishlist.id}/show_search_results")
-        
-    return render_template('users/search.html', form=form, wishlist=wishlist)
+            return redirect(f"/users/{wishlist.id}/show_search_results")
+    return render_template('users/wishlist_details.html',  wishlist=wishlist, form=form)
 
-@app.route('/users/<int:wishlist_id>/show_search_results')
+
+"""Show search results and "like" button to add item to your wishlist """
+@app.route('/users/<int:wishlist_id>/show_search_results', methods=['GET', 'POST'])
 def show_results(wishlist_id):
     result = session["result"]
-  
-    return render_template('/users/show_search_results.html', result=result)
+    wishlist = Wishlist.query.get_or_404(wishlist_id)
+    if "item_id" not in session:
+        form = AddItemForm()
+        
+        if form.validate_on_submit():
+            name = form.name.data
+            item = Item(name=name)
+            db.session.add(item)
+            db.session.commit()
+            flash("Item added!", "success")
+            return redirect(f"/users/{wishlist.id}/wishlist_details")  
+    
+    return render_template('/users/show_search_results.html', result=result, form=form, wishlist=wishlist)
+
+@app.route('/users/<int:wishlist_id>/wishlist_details', methods=["GET", "POST"])
+def show_likes(item_id):
+    if "username" not in session:
+        flash("Please login first", 'error')
+        return redirect("users/signup")
+    item= Item.query.get_or_404(item_id)
+
+    return render_template('users/wishlist_details.html', item=item)
+
+# @app.route('/users/<int:item_id>/likes', methods=["POST"])
+# def add_like(item_id):
+#     if "username" not in session:
+#         flash("Please login first", 'error')
+#         return redirect("users/signup")
+    
+    # if "item_id" not in session:
+    #     form = AddItemForm()
+        
+    #     if form.validate_on_submit():
+    #         description = form.description.data
+    #         item = Item(description=description)
+    #         db.session.add(item)
+    #         db.session.commit()
+    #         flash("Item added!", "success")
+    #         return redirect(f"/users/{item.id}/likes")
+        # return render_template('users/likes.html', form=form)
+       
+    # liked_item = Item.query.get_or_404(item_id)
+    # if liked_item.wishlist_id == username:
+    #     return abort(403)
+    
+    # wishlist_likes = session['username']
+
+    # if liked_item in wishlist_likes:
+    #     wishlist_id.likes = [like for like in wishlist_likes if like != liked_item]
+    # else:
+    #     wishlist_likes.append(liked_item)
+
+    # db.session.commit()
+
+    # return redirect('/')
 
 """Delete wish list"""
 @app.route('/users/<int:wishlist_id>/delete', methods=['POST'])
@@ -190,16 +241,5 @@ def delete_user(wishlist_id):
     db.session.delete(wishlist)
     db.session.commit()
     flash("Wishlist deleted!", "success")
-    return redirect("/")
+    return redirect('/')
 
-
-#@app.route('/users/search', methods=['POST'])
-#def search():
- #   item = Item(
-  #      name = request.json["name"],
-   #     price = request.json["price"])
-    
-    #db.session.add(item)
-    #db.session.commit()
-
-    #return (jsonify(item=item.serialize()), 201)

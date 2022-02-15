@@ -32,3 +32,7 @@ class WishlistForm(FlaskForm):
 class SearchItemForm(FlaskForm):
     """Form for searching for items"""
     name = StringField('Name', validators=[DataRequired()])
+
+class AddItemForm(FlaskForm):
+    """Form for adding Items to wishlist"""
+    name = StringField('(Optional) name')

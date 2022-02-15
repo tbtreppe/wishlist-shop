@@ -98,7 +98,11 @@ class Item(db.Model):
         nullable=False,
     )
 
-    wishlist = db.relationship('Wishlist', backref="items")
+    wishlist_id = db.Column(
+        db.Integer,
+        db.ForeignKey('wishlist.id')
+    )
+
 
 
 class Wishlist(db.Model):
@@ -114,17 +118,18 @@ class Wishlist(db.Model):
         db.Text,
         nullable=False,
     )
-    
-    item_id = db.Column(
-        db.Integer,
-        db.ForeignKey('items.id', ondelete='CASCADE'),
-    )
 
     username = db.Column(
         db.String(20),
         db.ForeignKey('users.username')
     )
     user = db.relationship('User', backref="wishlist")
+
+    item = db.relationship('Item', backref="wishlist")
+
+ 
+
+
 
 def connect_db(app):
     """Connect to database."""

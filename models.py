@@ -103,7 +103,7 @@ class Item(db.Model):
         db.ForeignKey('wishlist.id')
     )
 
-
+    wlist = db.relationship('Wishlist', backref="items")
 
 class Wishlist(db.Model):
     """Wishlist"""
@@ -125,7 +125,7 @@ class Wishlist(db.Model):
     )
     user = db.relationship('User', backref="wishlist")
 
-    item = db.relationship('Item', backref="wishlist")
+  
 
  
 

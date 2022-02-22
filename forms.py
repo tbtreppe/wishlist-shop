@@ -35,4 +35,4 @@ class SearchItemForm(FlaskForm):
 
 class AddItemForm(FlaskForm):
     """Form for adding Items to wishlist"""
-    name = StringField('(Optional) name')
+    name = StringField('Description')

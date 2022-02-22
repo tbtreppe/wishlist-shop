@@ -28,8 +28,8 @@ db.create_all()
 def homepage():
     if "username" in session:
         wishlist = Wishlist.query.all()
-#        wishlist_id = [w.id for w. username.wishlist] + [user.username]
-        return render_template('home.html', wishlist=wishlist) #wishlist=wishlist
+#       wishlist_id = [w.id for w. username.wishlist] + [user.username]
+        return render_template('home.html', wishlist=wishlist)
     else:
         return render_template('home_no_user.html')
 

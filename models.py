@@ -98,6 +98,10 @@ class Item(db.Model):
         nullable=False,
     )
 
+    url = db.Column(
+        db.Text,
+    )
+
     wishlist_id = db.Column(
         db.Integer,
         db.ForeignKey('wishlist.id')

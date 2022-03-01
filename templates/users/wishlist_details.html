@@ -23,7 +23,7 @@
     <tbody>
       {% for item in wishlist.item %}
       <tr>
-        <td>{{ item.url }}</td>
+        <td>{{item.name}} <img src="{{ item.url }}" /></td>
       </tr>
       {% endfor %}
     </tbody>

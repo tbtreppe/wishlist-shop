@@ -129,7 +129,7 @@ class Wishlist(db.Model):
     )
     user = db.relationship('User', backref="wishlist")
 
-  
+    item = db.relationship('Item', backref="wishlist")
 
  
 

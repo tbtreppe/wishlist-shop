@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField
+from wtforms import StringField, PasswordField, TextAreaField, HiddenField
 from wtforms.validators import DataRequired, Email, Length
 
 class UserAddForm(FlaskForm):
@@ -36,3 +36,4 @@ class SearchItemForm(FlaskForm):
 class AddItemForm(FlaskForm):
     """Form for adding Items to wishlist"""
     name = StringField('Description')
+    url = HiddenField('Image Url')

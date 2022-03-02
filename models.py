@@ -31,10 +31,6 @@ class User(db.Model):
         nullable=False,
     )
 
-    image_url = db.Column(
-        db.Text,
-        default="/static/images/default-pic.png",
-    )
 
     password = db.Column(
         db.Text,
@@ -44,7 +40,7 @@ class User(db.Model):
 
 
     @classmethod
-    def signup(cls, username, email, password, image_url, first_name, last_name):
+    def signup(cls, username, email, password, first_name, last_name):
         """Sign up user.
 
         Hashes password and adds user to system.
@@ -56,7 +52,6 @@ class User(db.Model):
             username=username,
             email=email,
             password=hashed_utf8,
-            image_url=image_url,
             first_name=first_name,
             last_name=last_name
         )
@@ -107,7 +102,6 @@ class Item(db.Model):
         db.ForeignKey('wishlist.id')
     )
 
-    wlist = db.relationship('Wishlist', backref="items")
 
 class Wishlist(db.Model):
     """Wishlist"""
@@ -129,7 +123,7 @@ class Wishlist(db.Model):
     )
     user = db.relationship('User', backref="wishlist")
 
-  
+    item = db.relationship('Item', backref="wishlist")
 
  
 

@@ -48,8 +48,8 @@ def signup():
         username=form.username.data
         password=form.password.data
         email=form.email.data
-        image_url=form.image_url.data or User.image_url.default.arg
-        user = User.signup(username, email, password, image_url, first_name, last_name)
+        
+        user = User.signup(username, email, password, first_name, last_name)
         db.session.add(user)
         try:
             db.session.commit()
@@ -98,27 +98,27 @@ def logout():
     return redirect ('/login')
 
 """edit and update user information"""
-@app.route('/users/<username>/update', methods=['GET', 'POST'])
+@app.route('/users/<username>', methods=['GET', 'POST'])
 def edit_profile(username):
     if "username" not in session:
         flash("Please log in first!", 'error')
         return redirect("users/signup")
     user = User.query.get(username)
-    form = UserEditForm(obj=user)
-
+    form = UserEditForm()
+    
     if form.validate_on_submit():
-        if User.authenticate(user.username, form.password.data):
-            user.first_name = form.first_name.data
-            user.last_name = form.last_name.data
-            user.username = form.username.data
-            user.email = form.email.data
-            user.image_url = form.image_url.data or "/static/images/default-pic.png"
+
+        if User.authenticate(form.username.data, form.password.data):            
+            first_name = form.first_name.data
+            last_name = form.last_name.data
+            username = form.username.data
+            email = form.email.data
             db.session.commit()
             flash("Updated information!", 'success')
-            return redirect(f"/users/{user.username}")
+            return redirect('/')
         flash("Wrong password, please try again", 'danger')
     
-    return render_template("users/edit.html", form=form, user=user)
+    return render_template('users/edit.html', form=form, user=user)
 
 """go to user page and create a wishlist"""
 @app.route('/users/<username>', methods=['GET', 'POST'])
@@ -171,16 +171,17 @@ def wishlist_details(wishlist_id):
 
 """Show search results and "like" button to add item to your wishlist """
 @app.route('/users/<int:wishlist_id>/show_search_results', methods=['GET', 'POST'])
-def show_results(wishlist_id, url):
+def show_results(wishlist_id):
     result = session["result"]
     wishlist = Wishlist.query.get_or_404(wishlist_id)
-    item = Item.query.get(url)
+    item = Item.query.get(wishlist_id)
 
     form = AddItemForm()
         
     if form.validate_on_submit():
         name = form.name.data
-        item = Item(name=name, wishlist_id=wishlist.id)
+        url = form.url.data
+        item = Item(name=name, wishlist_id=wishlist.id, url=url)
         db.session.add(item)
         db.session.commit()
         flash("Item added!", "success")

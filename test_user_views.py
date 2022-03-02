@@ -29,7 +29,6 @@ class UserViewTestCase(TestCase):
         self.testuser = User.signup(username="testuser",
                                     email="test@test.com",
                                     password="testuser",
-                                    image_url=None,
                                     first_name="tester",
                                     last_name="lasttester")
         self.testuser_username = "testuser"

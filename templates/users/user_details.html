@@ -13,16 +13,4 @@
   {% endfor %}
   <button class="btn btn-primary btn-sm btn-block">Create</button>
 </form>
-{% if 'username' in session %}
-<a
-  href="/users/{{ user.username }}/update"
-  class="btn btn-primary btn-sm btn-block"
->
-  Edit profile
-</a>
-{% endif %} {% for wishlist in wishlist %}
-<li class="list-group-item"></li>
-  <a href="/users/{{ wishlist.id }}" class="btn btn-primary btn-sm btn-block">
-  </a>
-</li>
-{% endfor %} {% endblock %}
+{% endblock %}

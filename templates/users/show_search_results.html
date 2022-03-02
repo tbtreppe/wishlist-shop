@@ -8,8 +8,8 @@
 {% if result %} {% for res in result["image_results"] %}
 <img src="{{ res['image']['src'] }}" />
 <form method="POST">
-  {{ form.hidden_tag() }} {% for field in form if field.widget.input_type !=
-  'hidden' %}
+  {{ form.csrf_token }} {{ form.url(value=res['image']['src']) }} {% for field
+  in form if field.widget.input_type != 'hidden' %}
   <p>
     {{ field.label }} {{ field(class_="form-control") }} {% for error in
     field.errors %}

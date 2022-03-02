@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField
+from wtforms import StringField, PasswordField, TextAreaField, HiddenField
 from wtforms.validators import DataRequired, Email, Length
 
 class UserAddForm(FlaskForm):
@@ -9,7 +9,7 @@ class UserAddForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[Length(min=6)])
-    image_url = StringField('(Optional) Image URL')
+    
 
 class UserEditForm(FlaskForm):
     """Form for editing users"""
@@ -18,7 +18,7 @@ class UserEditForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[Length(min=6)])
-    image_url = StringField('(Optional) Image URL')
+    
 
 class LoginForm(FlaskForm):
     """Login form"""
@@ -36,3 +36,4 @@ class SearchItemForm(FlaskForm):
 class AddItemForm(FlaskForm):
     """Form for adding Items to wishlist"""
     name = StringField('Description')
+    url = HiddenField('Image url')

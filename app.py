@@ -98,34 +98,33 @@ def logout():
     return redirect ('/login')
 
 """edit and update user information"""
-@app.route('/users/<username>', methods=['GET', 'POST'])
-def edit_profile(username):
+@app.route('/users/edit', methods=['GET', 'POST'])
+def edit_profile():
     if "username" not in session:
         flash("Please log in first!", 'error')
-        return redirect("users/signup")
-    user = User.query.get(username)
-    form = UserEditForm()
-    
-    if form.validate_on_submit():
+        return redirect("/signup")
+    user = session['username']
+    form = UserEditForm(obj=user)
 
-        if User.authenticate(form.username.data, form.password.data):            
-            first_name = form.first_name.data
-            last_name = form.last_name.data
-            username = form.username.data
-            email = form.email.data
+    if form.validate_on_submit():
+        if User.authenticate(user.username, form.password.data):
+            user.first_name = form.first_name.data
+            user.last_name = form.last_name.data
+            user.username = form.username.data
+            user.email = form.email.data
             db.session.commit()
-            flash("Updated information!", 'success')
-            return redirect('/')
+
+            return redirect(f"/users/{user.username}")
         flash("Wrong password, please try again", 'danger')
-    
-    return render_template('users/edit.html', form=form, user=user)
+
+    return render_template("users/edit.html", form=form, user=user)
 
 """go to user page and create a wishlist"""
 @app.route('/users/<username>', methods=['GET', 'POST'])
 def show_user_details(username):
     if "username" not in session:
         flash("Please log in first!", 'error')
-        return redirect("users/signup")
+        return redirect("signup")
     user = User.query.get(username)
     if "wishlist_id" not in session:
         form = WishlistForm()
@@ -145,7 +144,7 @@ def show_user_details(username):
 def wishlist_details(wishlist_id):
     if "username" not in session:
         flash("Please log in first!", 'error')
-        return redirect("users/signup")
+        return redirect("/signup")
     
     wishlist = Wishlist.query.get_or_404(wishlist_id)
     
@@ -189,26 +188,18 @@ def show_results(wishlist_id):
     
     return render_template('/users/show_search_results.html', result=result, form=form, wishlist=wishlist, item=item)
 
-"""
-NOT ACCESSED
-"""
-@app.route('/users/<int:wishlist_id>/wishlist_details', methods=["GET", "POST"])
-def show_likes(item_id):
-    if "username" not in session:
-        flash("Please login first", 'error')
-        return redirect("users/signup")
-    item= Item.query.get_or_404(item_id)
-    return render_template('users/wishlist_details.html', item=item)
-
 """Delete wish list"""
 @app.route('/users/<int:wishlist_id>/delete', methods=['POST'])
 def delete_user(wishlist_id):
     if "username" not in session:
         flash("Please login first", 'error')
-        return redirect("users/signup")
+        return redirect("/signup")
     wishlist = Wishlist.query.get(wishlist_id)
-    db.session.delete(wishlist)
-    db.session.commit()
-    flash("Wishlist deleted!", "success")
+    if wishlist.username == session['username']:
+        db.session.delete(wishlist)
+        db.session.commit()
+        flash("Wishlist deleted!", "success")
+        return redirect('/')
+    flash("You do not have permission to delete this Wish List")
     return redirect('/')
 

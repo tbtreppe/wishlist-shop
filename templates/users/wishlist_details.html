@@ -1,4 +1,5 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% block content %} {% if session['username'] ==
+wishlist.username %}
 <h1>Search items to add to your {{ wishlist.name }} Wish List</h1>
 
 <form method="POST">
@@ -13,7 +14,7 @@
   {% endfor %}
   <button class="btn btn-primary btn-sm btn-block">Search</button>
 </form>
-
+{% endif %} {% if 'username' in session %}
 <div class="container">
   <h1 class="display-3">{{wishlist.name}} Wish List</h1>
   <table class="table table-striped">
@@ -29,4 +30,4 @@
     </tbody>
   </table>
 </div>
-{% endblock %}
+{% endif %} {% endblock %}

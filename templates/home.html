@@ -1,13 +1,14 @@
 {% extends 'base.html' %} {% block content %}
 <h1>Welcome back!</h1>
-{% for wishlist in wishlist %}
+{% if 'username' in session %} {% for wishlist in wishlist %}
 <li class="list-group-item">
   <a
     href="/users/{{ wishlist.id }}/wishlist_details"
     class="btn btn-primary btn-sm btn-block"
-    >{{ wishlist.name }}
-  </a>
+    >{{ wishlist.name }} </a
+  ><i>Creator- {{ wishlist.username}}</i>
 </li>
+{% if session['username'] == wishlist.username %}
 <form>
   <button
     class="btn btn-danger btn-sm"
@@ -17,4 +18,4 @@
     Delete Wishlist
   </button>
 </form>
-{% endfor %} {% endblock %}
+{% endif %}{% endfor %} {% endif %}{% endblock %}

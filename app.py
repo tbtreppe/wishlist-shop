@@ -59,7 +59,7 @@ def signup():
             return render_template('users/signup.html', form=form)
         if user:
             session['username'] = user.username
-            flash ('Welcome!', 'success')
+            flash (f"Welcome {user.username}!", 'success')
 
             return redirect(f"/users/{user.username}")
 
@@ -98,12 +98,12 @@ def logout():
     return redirect ('/login')
 
 """edit and update user information"""
-@app.route('/users/edit', methods=['GET', 'POST'])
-def edit_profile():
+@app.route('/users/<username>/edit', methods=['GET', 'POST'])
+def edit_profile(username):
     if "username" not in session:
         flash("Please log in first!", 'error')
         return redirect("/signup")
-    user = session['username']
+    user = User.query.get(username)
     form = UserEditForm(obj=user)
 
     if form.validate_on_submit():

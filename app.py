@@ -190,7 +190,7 @@ def show_results(wishlist_id):
 
 """Delete wish list"""
 @app.route('/users/<int:wishlist_id>/delete', methods=['POST'])
-def delete_user(wishlist_id):
+def delete_wishlist(wishlist_id):
     if "username" not in session:
         flash("Please login first", 'error')
         return redirect("/signup")

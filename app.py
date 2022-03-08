@@ -27,9 +27,15 @@ db.create_all()
 @app.route('/')
 def homepage():
     if "username" in session:
-        wishlist = Wishlist.query.all()
-#       wishlist_id = [w.id for w. username.wishlist] + [user.username]
-        return render_template('home.html', wishlist=wishlist)
+        wishlists = Wishlist.query.filter(Wishlist.username == session["username"]).all()
+
+        # filtered_wishlist = []
+        # for wishlist in wishlists:
+        #     if wishlist.username == session["username"]:
+        #         filtered_wishlist.append(wishlist)
+
+        # filtered_wishlist = [wishlist for wishlist in wishlists if wishlist.username == session["username"]]
+        return render_template('home.html', wishlist=wishlists)
     else:
         return render_template('home_no_user.html')
 
@@ -98,12 +104,12 @@ def logout():
     return redirect ('/login')
 
 """edit and update user information"""
-@app.route('/users/<username>/edit', methods=['GET', 'POST'])
-def edit_profile(username):
+@app.route('/users/edit', methods=['GET', 'POST'])
+def edit_profile():
     if "username" not in session:
         flash("Please log in first!", 'error')
         return redirect("/signup")
-    user = User.query.get(username)
+    user = User.query.get(session["username"])
     form = UserEditForm(obj=user)
 
     if form.validate_on_submit():
@@ -120,12 +126,16 @@ def edit_profile(username):
     return render_template("users/edit.html", form=form, user=user)
 
 """go to user page and create a wishlist"""
-@app.route('/users/<username>', methods=['GET', 'POST'])
-def show_user_details(username):
+@app.route('/users/user_details', methods=['GET', 'POST'])
+def show_user_details():
     if "username" not in session:
+        # session = {"username": "candy"}
         flash("Please log in first!", 'error')
         return redirect("signup")
-    user = User.query.get(username)
+    user = User.query.get(session["username"])
+    if not user:
+        flash("User not found, blah, blah, blah")
+        return redirect("whatever")
     if "wishlist_id" not in session:
         form = WishlistForm()
     

@@ -27,9 +27,8 @@ db.create_all()
 @app.route('/')
 def homepage():
     if "username" in session:
-        wishlist = Wishlist.query.all()
-#       wishlist_id = [w.id for w. username.wishlist] + [user.username]
-        return render_template('home.html', wishlist=wishlist)
+        wishlists = Wishlist.query.filter(Wishlist.username == session['username']).all()
+        return render_template('home.html', wishlist=wishlists)
     else:
         return render_template('home_no_user.html')
 
@@ -61,7 +60,7 @@ def signup():
             session['username'] = user.username
             flash (f"Welcome {user.username}!", 'success')
 
-            return redirect(f"/users/{user.username}")
+            return redirect("/")
 
     else:
         return render_template('users/signup.html', form=form)
@@ -71,7 +70,7 @@ def signup():
 def login():
     """Handle user login."""
     if "username" in session:
-        return redirect(f"/users/{session['username']}")
+        return redirect("/")
     
     form = LoginForm()
 
@@ -98,12 +97,15 @@ def logout():
     return redirect ('/login')
 
 """edit and update user information"""
-@app.route('/users/<username>/edit', methods=['GET', 'POST'])
-def edit_profile(username):
+@app.route('/users/edit', methods=['GET', 'POST'])
+def edit_profile():
     if "username" not in session:
         flash("Please log in first!", 'error')
         return redirect("/signup")
-    user = User.query.get(username)
+    user = User.query.get(session['username'])
+    if not user:
+        flash("Not found", 'error')
+        return redirect('/')
     form = UserEditForm(obj=user)
 
     if form.validate_on_submit():
@@ -114,18 +116,21 @@ def edit_profile(username):
             user.email = form.email.data
             db.session.commit()
 
-            return redirect(f"/users/{user.username}")
+            return redirect("/")
         flash("Wrong password, please try again", 'danger')
 
     return render_template("users/edit.html", form=form, user=user)
 
 """go to user page and create a wishlist"""
-@app.route('/users/<username>', methods=['GET', 'POST'])
-def show_user_details(username):
+@app.route('/users/user_details', methods=['GET', 'POST'])
+def show_user_details():
     if "username" not in session:
         flash("Please log in first!", 'error')
         return redirect("signup")
-    user = User.query.get(username)
+    user = User.query.get(session['username'])
+    if not user:
+        flash("Not found", 'error')
+        return redirect('/')
     if "wishlist_id" not in session:
         form = WishlistForm()
     
